@@ -17,7 +17,7 @@ export default class Connection {
     }
 
     async getUsers() {
-        //TODO
+        return this.#fetchRequest('', 'GET')
     }
 
     async addUser(id, userData) {
