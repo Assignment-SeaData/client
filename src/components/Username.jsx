@@ -4,7 +4,7 @@ const Username = (props) => {
     const className = props.className
 
     return <div>
-        <span className={className}>{`${username[0]} `}</span>{username[1]}
+        <span className={className}>{`${username[0]} `}</span>{username.slice(1).join(' ')}
     </div>
 }
 

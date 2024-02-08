@@ -17,19 +17,19 @@ export default class Connection {
     }
 
     async getUsers() {
-        return this.#fetchRequest('', 'GET')
+        return await this.#fetchRequest('', 'GET')
     }
 
-    async addUser(id, userData) {
-        //TODO
+    async addUser(userData) {
+        return await this.#fetchRequest('', 'POST', JSON.stringify(userData))
     }
 
     async editUser(id, userData) {
-        //TODO
+        return await this.#fetchRequest('/' + id, 'PUT', JSON.stringify(userData))
     }
 
     async deleteUser(id) {
-        //TODO
+        return await this.#fetchRequest('/' + id, 'DELETE')
     }
 
 }

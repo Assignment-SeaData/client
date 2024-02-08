@@ -1,28 +1,129 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { connection } from "./config/config";
 import './App.css';
-import Searching from './components/Searching.jsx';
 import Users from './components/pages/Users';
-import { theme } from './util/UsersTheme.js'
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { userTheme } from './util/UsersTheme.js'
 import { ThemeProvider } from '@mui/material/styles'
-import AppBar from '@mui/material/AppBar';
-import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
-import Box from '@mui/material/Box';
-import { useTheme } from "@mui/material/styles";
+import UserForm from "./components/forms/UserFrom.jsx";
+import DeleteUserForm from "./components/forms/DeleteUserForm.jsx";
+import { useDispatch } from "react-redux";
+import { alertActions } from "./redux/slices/alertSlice.js";
+import { useSelectorAlert } from "./redux/store.js";
+import Header from "./components/Header.jsx";
+import AlertInfo from "./components/AlertInfo.jsx";
 
 function App() {
 
-    const t = useTheme();
-    const lessThanSmall = useMediaQuery(t.breakpoints.down("md"));
+    const dispatch = useDispatch();
 
     const [users, setUsers] = useState({ filter: [], display: [] });
+    const [openUserDialog, setOpenUserDialog] = useState(false)
+    const [openDeleteUserDialog, setOpenDeleteUserDialog] = useState(false)
+    const selectedUserRef = useRef(null)
 
     const getUsers = async () => {
         const response = await connection.getUsers();
         const data = await response.json();
         setUsers({ filter: data, display: data })
+    }
+
+    const handleOpenAddDialog = () => {
+        setOpenUserDialog(true)
+    }
+
+    const handleOpenEditDialog = (e, cellValue) => {
+        selectedUserRef.current = cellValue.row
+        setOpenUserDialog(true)
+    }
+
+    const handleCloseUserDialog = () => {
+        selectedUserRef.current = null
+        setOpenUserDialog(false)
+    }
+
+    const handleOpenDeleteDialog = (e, cellValue) => {
+        console.log(cellValue);
+        selectedUserRef.current = cellValue.row
+        setOpenDeleteUserDialog(true)
+    }
+
+    const handleCloseDeleteDialog = () => {
+        setOpenDeleteUserDialog(false)
+    }
+
+    const handleSubmitAddForm = async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const userData = {
+            fullName: formData.get('fullname'),
+            country: formData.get('country'),
+            city: formData.get('city'),
+            email: formData.get('email'),
+            phoneNumber: formData.get('phoneNumber'),
+            jobTitle: formData.get('jobTitle'),
+            experience: +formData.get('experience'),
+        }
+        const response = await connection.addUser(userData)
+        if (response.ok) {
+            const data = await response.json();
+            setUsers(prevUsers => {
+                const newUsers = prevUsers.filter.slice()
+                newUsers.push(data);
+                return { display: newUsers, filter: newUsers };
+            })
+            handleCloseUserDialog()
+            dispatch(alertActions.set({ message: "User was added", severity: "success" }))
+        } else {
+            const message = await response.text()
+            dispatch(alertActions.set({ message, severity: "error" }))
+        }
+    }
+
+    const handleSubmitEditForm = async (event) => {
+        event.preventDefault();
+        console.log(selectedUserRef);
+        const selectedId = selectedUserRef.current?.id;
+        const formData = new FormData(event.currentTarget);
+        const userData = {
+            fullName: formData.get('fullname'),
+            country: formData.get('country'),
+            city: formData.get('city'),
+            email: formData.get('email'),
+            phoneNumber: formData.get('phoneNumber'),
+            jobTitle: formData.get('jobTitle'),
+            experience: +formData.get('experience'),
+        }
+        const response = await connection.editUser(selectedId, userData)
+        if (response.ok) {
+            const data = await response.json();
+            setUsers(prevUsers => {
+                const newUsers = prevUsers.filter.map(user => user.id != selectedId ? user : data);
+                return { display: newUsers, filter: newUsers };
+            })
+            handleCloseUserDialog();
+            dispatch(alertActions.set({ message: "User was edited", severity: "success" }))
+        } else {
+            const message = await response.text()
+            dispatch(alertActions.set({ message, severity: "error" }))
+        }
+    }
+
+    const handleSubmitDeleteForm = async (event) => {
+        event.preventDefault();
+        const selectedId = selectedUserRef.current.id;
+        const response = await connection.deleteUser(selectedUserRef.current.id)
+        if (response.ok) {
+            setUsers(prevUsers => {
+                const newUsers = prevUsers.filter.filter(user => user.id != selectedId);
+                return { display: newUsers, filter: newUsers };
+            })
+            selectedUserRef.current = null;
+            handleCloseDeleteDialog();
+            dispatch(alertActions.set({ message: "User was deleted", severity: "success" }))
+        } else {
+            const message = await response.text()
+            dispatch(alertActions.set({ message, severity: "error" }))
+        }
     }
 
     useEffect(() => {
@@ -31,26 +132,13 @@ function App() {
 
     return (
         <div>
-            <AppBar position="sticky" color='primary' sx={{ display: 'flex' }}>
-                <Box sx={{ margin: '.5rem', display: 'flex', gap: '.5rem' }}>
-                    <Box sx={{ width: '10%' }}>
-                        {lessThanSmall ?
-                            <Button variant="contained" startIcon={<AddIcon sx={{ margin: 0 }} />} sx={{ height: '100%', width: '100%', margin: 0, fontSize: '10px' }}>
-                            </Button>
-                            :
-                            <Button variant="contained" fullWidth sx={{ height: '100%', margin: 0, fontSize: '10px' }}>
-                                Add User
-                            </Button>
-                        }
-                    </Box>
-                    <Box sx={{ width: `calc(100vw - 15%)` }}>
-                        <Searching users={users} setUsers={setUsers} />
-                    </Box>
-                </Box>
-            </AppBar>
-            <ThemeProvider theme={theme}>
-                <Users users={users.display} />
+            <Header users={users} setUsers={setUsers} handleOpenAddDialog={handleOpenAddDialog} />
+            <ThemeProvider theme={userTheme}>
+                <Users users={users.display} handleOpenDeleteDialog={handleOpenDeleteDialog} handleOpenEditDialog={handleOpenEditDialog} />
             </ThemeProvider>
+            {openUserDialog && <UserForm onClose={handleCloseUserDialog} onSubmit={selectedUserRef.current == null ? handleSubmitAddForm : handleSubmitEditForm} selectedUser={selectedUserRef} />}
+            {openDeleteUserDialog && <DeleteUserForm onClose={handleCloseDeleteDialog} onSubmit={handleSubmitDeleteForm} />}
+            <AlertInfo />
         </div>
     );
 }

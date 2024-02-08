@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles'
 
-export const theme = createTheme({
+export const userTheme = createTheme({
     typography: {
         "fontFamily": `"Open Sans", "sans-serif"`,
         "fontSize": 15, 

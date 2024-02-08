@@ -1,6 +1,5 @@
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete';
-import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
 
 const Searching = (props) => {
@@ -11,20 +10,20 @@ const Searching = (props) => {
 
     useEffect(() => {
         setUsers(prevUsers => {
-            return { ...prevUsers, display: value ? prevUsers.filter.filter(user => user.full_name == value) : prevUsers.filter }
+            return { ...prevUsers, display: value ? prevUsers.filter.filter(user => user.fullName == value) : prevUsers.filter }
         })
     }, [value])
 
     return <Autocomplete
-        style={{ width: '100%' }}
+        style={{ width: '100%', backgroundColor: '#fff', borderRadius: '.5rem', overflow: 'hidden' }}
         size='small'
         fullWidth
         disablePortal
-        options={users.filter.map(user => user.full_name)}
+        options={Array.from(new Set(users.filter.map(user => user.fullName)))}
         sx={{ width: 300 }}
         renderInput={(params) => <TextField {...params} label="Users" />}
         onChange={(event, newValue) => {
-            setValue(newValue)
+            setValue(newValue == null ? '' : newValue)
         }}
         value={value}
     />
