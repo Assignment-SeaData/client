@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog'
 import Box from '@mui/material/Box';
@@ -5,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import { useState } from 'react';
+import CountrySelect from '../ContryList';
 
 const UserForm = ({ onClose, onSubmit, selectedUser }) => {
     const defaultUserValue = {
@@ -13,7 +14,8 @@ const UserForm = ({ onClose, onSubmit, selectedUser }) => {
         country: selectedUser.current?.country,
         city: selectedUser.current?.city,
         email: selectedUser.current?.email,
-        phoneNumber: selectedUser.current?.phoneNumber,
+        countryCode: selectedUser.current?.phoneNumber.split(' ')[0],
+        phoneNumber: selectedUser.current?.phoneNumber.split(' ')[1],
         jobTitle: selectedUser.current?.jobTitle,
         experience: selectedUser.current?.experience,
     }
@@ -77,7 +79,14 @@ const UserForm = ({ onClose, onSubmit, selectedUser }) => {
                             name="email"
                         />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={4}>
+                        <CountrySelect
+                            // value={userData.phoneNumber[0]}
+                            onChange={(e) => setUserData({ ...userData, phoneNumber: e.target.value })}
+                            defaultValue={userData.countryCode}
+                        />
+                    </Grid>
+                    <Grid item xs={8}>
                         <TextField
                             onChange={(e) => setUserData({ ...userData, phoneNumber: e.target.value })}
                             defaultValue={userData.phoneNumber}

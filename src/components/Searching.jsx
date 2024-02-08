@@ -1,6 +1,6 @@
+import { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete';
-import { useEffect, useState } from 'react';
 
 const Searching = (props) => {
 
@@ -21,7 +21,7 @@ const Searching = (props) => {
         disablePortal
         options={Array.from(new Set(users.filter.map(user => user.fullName)))}
         sx={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} label="Users" />}
+        renderInput={(params) => <TextField {...params} label="User" variant='filled' />}
         onChange={(event, newValue) => {
             setValue(newValue == null ? '' : newValue)
         }}

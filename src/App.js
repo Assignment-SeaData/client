@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from "react"
-import { connection } from "./config/config";
-import './App.css';
-import Users from './components/pages/Users';
-import { userTheme } from './util/UsersTheme.js'
 import { ThemeProvider } from '@mui/material/styles'
-import UserForm from "./components/forms/UserFrom.jsx";
-import DeleteUserForm from "./components/forms/DeleteUserForm.jsx";
 import { useDispatch } from "react-redux";
-import { alertActions } from "./redux/slices/alertSlice.js";
-import { useSelectorAlert } from "./redux/store.js";
+
+import Users from './components/pages/Users';
+import UserForm from "./components/forms/UserForm.jsx";
+import DeleteUserForm from "./components/forms/DeleteUserForm.jsx";
 import Header from "./components/Header.jsx";
 import AlertInfo from "./components/AlertInfo.jsx";
+import { connection } from "./config/config";
+import { alertActions } from "./redux/slices/alertSlice.js";
+import { userTheme } from './util/UsersTheme.js'
 
 function App() {
 
@@ -42,7 +41,6 @@ function App() {
     }
 
     const handleOpenDeleteDialog = (e, cellValue) => {
-        console.log(cellValue);
         selectedUserRef.current = cellValue.row
         setOpenDeleteUserDialog(true)
     }
@@ -74,8 +72,8 @@ function App() {
             handleCloseUserDialog()
             dispatch(alertActions.set({ message: "User was added", severity: "success" }))
         } else {
-            const message = await response.text()
-            dispatch(alertActions.set({ message, severity: "error" }))
+            const message = JSON.parse(await response.text())
+            dispatch(alertActions.set({ ...message, severity: "error" }))
         }
     }
 
@@ -103,8 +101,8 @@ function App() {
             handleCloseUserDialog();
             dispatch(alertActions.set({ message: "User was edited", severity: "success" }))
         } else {
-            const message = await response.text()
-            dispatch(alertActions.set({ message, severity: "error" }))
+            const message = JSON.parse(await response.text())
+            dispatch(alertActions.set({ ...message, severity: "error" }))
         }
     }
 
@@ -121,8 +119,8 @@ function App() {
             handleCloseDeleteDialog();
             dispatch(alertActions.set({ message: "User was deleted", severity: "success" }))
         } else {
-            const message = await response.text()
-            dispatch(alertActions.set({ message, severity: "error" }))
+            const message = JSON.parse(await response.text())
+            dispatch(alertActions.set({ ...message, severity: "error" }))
         }
     }
 

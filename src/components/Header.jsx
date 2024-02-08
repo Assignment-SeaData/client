@@ -3,14 +3,14 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
-import Searching from './Searching.jsx';
-import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+
+import Searching from './Searching.jsx';
 
 const Header = (props) => {
 
     const { users, setUsers, handleOpenAddDialog } = props
-    console.log(users);
 
     const theme = useTheme();
     const lessThanSmall = useMediaQuery(theme.breakpoints.down("md"));

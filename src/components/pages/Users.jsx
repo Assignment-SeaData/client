@@ -3,6 +3,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
+
 import Username from '../Username';
 
 const Users = (props) => {
@@ -113,7 +114,7 @@ const Users = (props) => {
             background: '#f5f5f5',
         },
         [`& .${gridClasses.row}:hover, .${gridClasses.row}&.Mui-hovered`]: {
-            background: 'lightgray',
+            background: 'red',
             cursor: 'pointer'
         },
         [`& .${gridClasses.row}:hover .table-actions, .${gridClasses.row}&.Mui-hovered .table-actions`]: {
