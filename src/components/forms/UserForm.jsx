@@ -125,7 +125,8 @@ const UserForm = ({ onClose, onSubmit, selectedUser }) => {
                             name="experience"
                             inputProps={{
                                 min: 0,
-                                max: 100
+                                max: 100,
+                                step: '0.1'
                             }}
                         />
                     </Grid>

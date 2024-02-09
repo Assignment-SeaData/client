@@ -17,7 +17,6 @@ export default class Connection {
     }
 
     #getUserData(userData) {
-        console.log(userData);
         const newUserData = { ...userData, phoneNumber: `${userData.countryCode} ${userData.phoneNumber}` }
         delete newUserData.countryCode
         return newUserData
