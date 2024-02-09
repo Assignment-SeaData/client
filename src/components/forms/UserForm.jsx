@@ -6,22 +6,24 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import CountrySelect from '../ContryList';
+import CountryCodeSelect from '../CountryCodeSelect';
+import CountrySelect from '../CountrySelect';
+import CitySelect from '../CitySelect';
 
 const UserForm = ({ onClose, onSubmit, selectedUser }) => {
     const defaultUserValue = {
-        fullName: selectedUser.current?.fullName,
-        country: selectedUser.current?.country,
-        city: selectedUser.current?.city,
-        email: selectedUser.current?.email,
-        countryCode: selectedUser.current?.phoneNumber.split(' ')[0],
-        phoneNumber: selectedUser.current?.phoneNumber.split(' ')[1],
-        jobTitle: selectedUser.current?.jobTitle,
-        experience: selectedUser.current?.experience,
+        fullName: selectedUser.current?.fullName || '',
+        country: selectedUser.current?.country || '',
+        city: selectedUser.current?.city || '',
+        email: selectedUser.current?.email || '',
+        countryCode: selectedUser.current?.phoneNumber.split(' ')[0] || '',
+        phoneNumber: selectedUser.current?.phoneNumber.split(' ')[1] || '',
+        jobTitle: selectedUser.current?.jobTitle || '',
+        experience: selectedUser.current?.experience || '',
     }
 
     const [userData, setUserData] = useState(defaultUserValue);
-    // const submitDisable = (userData.firstName == defaultUserValue.firstName) && userData.lastName == defaultUserValue.lastName || userData.firstName == '' || userData.lastName == ''
+    const submitDisable = Object.keys(userData).every(key => userData[key] == defaultUserValue[key])
 
     const handleReset = () => {
         setUserData(defaultUserValue)
@@ -32,39 +34,31 @@ const UserForm = ({ onClose, onSubmit, selectedUser }) => {
             {selectedUser.current == null ? 'Add User' : 'Edit User'}
         </DialogTitle>
         <DialogContent>
-            <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
+            <Box component="form" onSubmit={(e) => onSubmit(e, userData)} noValidate sx={{ mt: 1 }}>
                 <Grid container justifyContent={'center'} spacing={1}>
                     <Grid item xs={12}>
                         <TextField
-                            onChange={(e) => setUserData({ ...userData, fullname: e.target.value })}
+                            onChange={(e) => setUserData({ ...userData, fullName: e.target.value })}
                             defaultValue={userData.fullName}
                             required
                             fullWidth
-                            id="fullname"
+                            id="fullName"
                             label="Full name"
-                            name="fullname"
+                            name="fullName"
                         />
                     </Grid>
+
                     <Grid item xs={12}>
-                        <TextField
-                            onChange={(e) => setUserData({ ...userData, country: e.target.value })}
+                        <CountrySelect
                             defaultValue={userData.country}
-                            required
-                            fullWidth
-                            id="country"
-                            label="Country"
-                            name="country"
+                            onChange={(newValue) => setUserData({ ...userData, country: newValue })}
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField
-                            onChange={(e) => setUserData({ ...userData, city: e.target.value })}
+                        <CitySelect
+                            inputCountry={userData.country}
                             defaultValue={userData.city}
-                            required
-                            fullWidth
-                            id="city"
-                            label="City"
-                            name="city"
+                            onChange={(newValue) => setUserData({ ...userData, city: newValue })}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -80,21 +74,32 @@ const UserForm = ({ onClose, onSubmit, selectedUser }) => {
                         />
                     </Grid>
                     <Grid item xs={4}>
-                        <CountrySelect
-                            // value={userData.phoneNumber[0]}
-                            onChange={(e) => setUserData({ ...userData, phoneNumber: e.target.value })}
+                        <CountryCodeSelect
+                            onChange={(event, newValue) => setUserData({ ...userData, countryCode: newValue ? `+${newValue}` : '' })}
                             defaultValue={userData.countryCode}
                         />
                     </Grid>
                     <Grid item xs={8}>
                         <TextField
-                            onChange={(e) => setUserData({ ...userData, phoneNumber: e.target.value })}
+                            sx={{
+                                "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button": {
+                                    WebkitAppearance: "none",
+                                    margin: 0,
+                                },
+                            }}
+                            onChange={(e) => {
+                                setUserData({ ...userData, phoneNumber: e.target.value })
+                            }}
                             defaultValue={userData.phoneNumber}
                             required
                             fullWidth
+                            type='number'
                             id="phoneNumber"
                             label="Phone"
                             name="phoneNumber"
+                            inputProps={{
+                                min: 0
+                            }}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -118,11 +123,14 @@ const UserForm = ({ onClose, onSubmit, selectedUser }) => {
                             id="experience"
                             label="Experience"
                             name="experience"
+                            inputProps={{
+                                min: 0,
+                                max: 100
+                            }}
                         />
                     </Grid>
                     <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                        {/* <Button type="submit" disabled={submitDisable}>Submit</Button> */}
-                        <Button type="submit">Submit</Button>
+                        <Button type="submit" disabled={submitDisable}>Submit</Button>
                         <Button onClick={onClose}>Close</Button>
                         <Button type='reset' onClick={handleReset}>Reset</Button>
                     </Grid>

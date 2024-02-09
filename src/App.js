@@ -49,18 +49,18 @@ function App() {
         setOpenDeleteUserDialog(false)
     }
 
-    const handleSubmitAddForm = async (event) => {
+    const handleSubmitAddForm = async (event, userData) => {
         event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        const userData = {
-            fullName: formData.get('fullname'),
-            country: formData.get('country'),
-            city: formData.get('city'),
-            email: formData.get('email'),
-            phoneNumber: formData.get('phoneNumber'),
-            jobTitle: formData.get('jobTitle'),
-            experience: +formData.get('experience'),
-        }
+        // const formData = new FormData(event.currentTarget);
+        // const userData = {
+        //     fullName: formData.get('fullname'),
+        //     country: formData.get('country'),
+        //     city: formData.get('city'),
+        //     email: formData.get('email'),
+        //     phoneNumber: formData.get('phoneNumber'),
+        //     jobTitle: formData.get('jobTitle'),
+        //     experience: +formData.get('experience'),
+        // }
         const response = await connection.addUser(userData)
         if (response.ok) {
             const data = await response.json();
@@ -77,20 +77,9 @@ function App() {
         }
     }
 
-    const handleSubmitEditForm = async (event) => {
+    const handleSubmitEditForm = async (event, userData) => {
         event.preventDefault();
-        console.log(selectedUserRef);
         const selectedId = selectedUserRef.current?.id;
-        const formData = new FormData(event.currentTarget);
-        const userData = {
-            fullName: formData.get('fullname'),
-            country: formData.get('country'),
-            city: formData.get('city'),
-            email: formData.get('email'),
-            phoneNumber: formData.get('phoneNumber'),
-            jobTitle: formData.get('jobTitle'),
-            experience: +formData.get('experience'),
-        }
         const response = await connection.editUser(selectedId, userData)
         if (response.ok) {
             const data = await response.json();

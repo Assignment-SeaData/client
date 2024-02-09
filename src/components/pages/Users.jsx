@@ -5,84 +5,76 @@ import EditIcon from '@mui/icons-material/Edit';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
 
 import Username from '../Username';
+import { useEffect, useState } from 'react';
 
 const Users = (props) => {
 
     const { users, handleOpenDeleteDialog, handleOpenEditDialog } = props
+
+    const [appBarHeight, setAppBarHeight] = useState(0)
 
     const columns = [
         {
             field: 'id',
             headerName: 'ID',
             width: 70,
-            // flex: 1,
             editable: false,
             disableColumnMenu: true,
-            headerClassName: 'table-header'
         },
         {
             field: 'fullName',
             headerName: 'Full Name',
-            // width: 150,
             flex: 1,
             editable: false,
             disableColumnMenu: true,
-            headerClassName: 'table-header',
             renderCell: (params) => <Username text={params.row.fullName} className={+params.row.experience <= 1 ? 'table-cell-junior' : ''} />
         },
         {
             field: 'country',
             headerName: 'Country',
-            // width: 150,
             flex: 1,
             editable: false,
             disableColumnMenu: true,
-            headerClassName: 'table-header'
         },
         {
             field: 'city',
             headerName: 'City',
-            // width: 110,
             flex: 1,
             editable: false,
             disableColumnMenu: true,
-            headerClassName: 'table-header'
         },
         {
             field: 'phoneNumber',
             headerName: 'Phone',
-            type: 'number',
             // width: 110,
             flex: 1,
             editable: false,
             disableColumnMenu: true,
-            headerClassName: 'table-header'
+            renderCell: (params) => {
+                const phoneNumberArr = params.row.phoneNumber.split(' ')
+                return <>{phoneNumberArr.join('')}</>
+            }
         },
         {
             field: 'jobTitle',
             headerName: 'Job Title',
-            // width: 110,
             flex: 1,
             editable: false,
             disableColumnMenu: true,
-            headerClassName: 'table-header'
         },
         {
             field: 'experience',
             headerName: 'Experience (age)',
             type: 'number',
-            // width: 110,
             flex: 1,
             editable: false,
             disableColumnMenu: true,
-            headerClassName: 'table-header'
         },
         {
             field: 'Actions',
             headerName: '',
             editable: false,
             disableColumnMenu: true,
-            headerClassName: 'table-header',
             sortable: false,
             renderCell: (cellValue) => {
                 return <Box className='table-actions' display={'none'}>
@@ -97,37 +89,45 @@ const Users = (props) => {
         }
     ];
 
+    useEffect(() => {
+        setAppBarHeight(document.getElementById("appBar").clientHeight);
+    }, [])
+
     return <Box sx={{
+        height: `calc(100vh - ${appBarHeight}px - 1rem)`,
         margin: '.5rem',
         paddingX: '10%',
-        paddingY: '1rem',
         color: '#808080',
         background: '#fff',
-        '& .table-header': {
-            background: '#36304a',
-            color: 'white'
-        },
-        '& span.table-cell-junior': {
-            color: 'orange'
-        },
-        [`& .${gridClasses.row}.even`]: {
-            background: '#f5f5f5',
-        },
-        [`& .${gridClasses.row}:hover, .${gridClasses.row}&.Mui-hovered`]: {
-            background: 'red',
-            cursor: 'pointer'
-        },
-        [`& .${gridClasses.row}:hover .table-actions, .${gridClasses.row}&.Mui-hovered .table-actions`]: {
-            display: 'block'
-        }
     }}>
         <DataGrid
+            autoPageSize
+            sx={{
+                maxHeight: '100%',
+                "& .MuiDataGrid-columnHeaders": {
+                    background: '#36304a',
+                    color: "white",
+                    fontWeight: "bold"
+                },
+                '& span.table-cell-junior': {
+                    color: 'orange'
+                },
+                [`& .${gridClasses.row}.even`]: {
+                    background: '#f5f5f5',
+                },
+                [`& .${gridClasses.row}:hover, .${gridClasses.row}&.Mui-hovered`]: {
+                    background: 'lightgray',
+                    cursor: 'pointer'
+                },
+                [`& .${gridClasses.row}:hover .table-actions, .${gridClasses.row}&.Mui-hovered .table-actions`]: {
+                    display: 'block'
+                }
+            }}
             disableRowSelectionOnClick
             rows={users}
             columns={columns}
             getRowClassName={(params) => params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'}
         />
-
     </Box>
 }
 

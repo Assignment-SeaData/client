@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
 import countryCodes from 'country-codes-list'
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import { useMemo } from 'react';
 
 function getAllCountryObjects() {
     const allCountries = countryCodes.customList(`countryCode`, `{"label":"{countryNameEn}", "phone":"{countryCallingCode}"}`);
@@ -12,28 +12,23 @@ function getAllCountryObjects() {
         return {
             code: code,
             label: labelPhoneObj.label,
-            phone: labelPhoneObj.phone,
+            phone: labelPhoneObj.phone.replace(' ', ''),
         };
     });
     return countryObjects;
 }
 
-const CountrySelect = (props) => {
+const CountryCodeSelect = (props) => {
 
     const { onChange, defaultValue } = props
 
-    console.log(defaultValue);
-
-    const countryCodesObject = getAllCountryObjects();
-    const [value, setValue] = useState({ phone: defaultValue || '' })
+    const countryCodesObject = useMemo(() => getAllCountryObjects(), []);
 
     return <Autocomplete
         options={countryCodesObject}
         autoHighlight
-        onChange={(event, newValue) => {
-            setValue(newValue == null ? '' : {...newValue, phone: `+${newValue.phone}`})
-        }}
-        value={value.phone ? `${value.phone}` : ''}
+        onChange={(event, newValue) => onChange(event, newValue?.phone || '')}
+        value={defaultValue}
         renderOption={(props, option) => (
             <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
                 <img
@@ -48,15 +43,15 @@ const CountrySelect = (props) => {
         )}
         renderInput={(params) => (
             <TextField
+                defaultValue={defaultValue}
                 {...params}
                 label="Country code"
                 inputProps={{
                     ...params.inputProps,
-                    autoComplete: 'new-password', // disable autocomplete and autofill
                 }}
             />
         )}
     />
 }
 
-export default CountrySelect
+export default CountryCodeSelect

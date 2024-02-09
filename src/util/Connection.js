@@ -16,16 +16,23 @@ export default class Connection {
         })
     }
 
+    #getUserData(userData) {
+        console.log(userData);
+        const newUserData = { ...userData, phoneNumber: `${userData.countryCode} ${userData.phoneNumber}` }
+        delete newUserData.countryCode
+        return newUserData
+    }
+
     async getUsers() {
         return await this.#fetchRequest('', 'GET')
     }
 
     async addUser(userData) {
-        return await this.#fetchRequest('', 'POST', JSON.stringify(userData))
+        return await this.#fetchRequest('', 'POST', JSON.stringify(this.#getUserData(userData)))
     }
 
     async editUser(id, userData) {
-        return await this.#fetchRequest('/' + id, 'PUT', JSON.stringify(userData))
+        return await this.#fetchRequest('/' + id, 'PUT', JSON.stringify(this.#getUserData(userData)))
     }
 
     async deleteUser(id) {

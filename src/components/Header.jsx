@@ -15,7 +15,7 @@ const Header = (props) => {
     const theme = useTheme();
     const lessThanSmall = useMediaQuery(theme.breakpoints.down("md"));
 
-    return <AppBar position="sticky" color='primary' sx={{ display: 'flex' }}>
+    return <AppBar id="appBar" position="sticky" color='primary' sx={{ display: 'flex' }}>
         <Box sx={{ margin: '.5rem', display: 'flex', gap: '.5rem', justifyContent: 'center' }}>
             <Box sx={{ width: '10%', display: 'flex', justifyContent: 'center' }}>
                 {lessThanSmall ?
