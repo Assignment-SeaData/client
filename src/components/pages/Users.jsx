@@ -46,7 +46,6 @@ const Users = (props) => {
         {
             field: 'phoneNumber',
             headerName: 'Phone',
-            // width: 110,
             flex: 1,
             editable: false,
             disableColumnMenu: true,

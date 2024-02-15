@@ -51,16 +51,6 @@ function App() {
 
     const handleSubmitAddForm = async (event, userData) => {
         event.preventDefault();
-        // const formData = new FormData(event.currentTarget);
-        // const userData = {
-        //     fullName: formData.get('fullname'),
-        //     country: formData.get('country'),
-        //     city: formData.get('city'),
-        //     email: formData.get('email'),
-        //     phoneNumber: formData.get('phoneNumber'),
-        //     jobTitle: formData.get('jobTitle'),
-        //     experience: +formData.get('experience'),
-        // }
         const response = await connection.addUser(userData)
         if (response.ok) {
             const data = await response.json();
